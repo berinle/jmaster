@@ -1,0 +1,46 @@
+apply plugin: 'jetty'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+
+group = "jmaster"
+version = "1.0"
+
+repositories {
+    flatDir dirs:['lib']
+	mavenCentral()
+	mavenRepo urls:"http://repository.jboss.org/nexus/content/groups/public-jboss/"
+}
+
+task init << {
+	sourceSets.all*.java.srcDirs*.each { it.mkdirs() }
+	sourceSets.all*.groovy.srcDirs*.each { it.mkdirs() }
+	sourceSets.all*.resources.srcDirs*.each { it.mkdirs() }
+}
+
+
+dependencies {
+	compile "org.hibernate:hibernate-search:3.3.0.Final"
+	compile "log4j:log4j:1.2.16@jar"
+    compile "org.slf4j:slf4j-log4j12:1.6.1@jar"
+	compile "javassist:javassist:3.4.GA@jar"
+    compile 'hsqldb:hsqldb:1.8.0.10'
+
+	compile 'commons-dbcp:commons-dbcp:1.4'
+	
+	//activemq
+	compile 'org.apache.activemq:activemq-all:5.4.2@jar'
+
+	//spring dependencies
+	compile 'org.springframework:spring-webmvc:3.0.5.RELEASE'
+	compile 'org.springframework:spring-context-support:3.0.5.RELEASE'	
+	compile 'org.springframework:spring-orm:3.0.5.RELEASE'
+	compile 'org.springframework:spring-jms:3.0.5.RELEASE'
+
+	runtime 'commons-collections:commons-collections:3.2'
+	runtime 'org.springframework:spring-tx:3.0.4.RELEASE'
+
+
+    //groovy sdk
+    compile 'org.codehaus.groovy:groovy:1.7.7'
+    runtime 'commons-cli:commons-cli:1.2'
+}

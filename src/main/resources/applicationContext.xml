@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-2.5.xsd http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.0.xsd">
+
+    <context:component-scan base-package="com.jrock.hsdemo"/>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+            p:url="jdbc:hsqldb:hsql://localhost/hsdemo"
+            p:driverClassName="org.hsqldb.jdbcDriver"
+            p:username="sa"
+            p:password="">
+    </bean>
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+    </bean>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+
+    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"
+            p:brokerURL="tcp://localhost:61616"/>
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate"
+            p:connectionFactory-ref="connectionFactory"/>
+
+
+    <jms:listener-container connection-factory="connectionFactory">
+        <jms:listener destination="HibernateSearchController" ref="masterBootstrap"/>
+    </jms:listener-container>
+</beans>
